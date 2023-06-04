@@ -13,7 +13,7 @@ import {
 	detailsClickAtom,
 	routeNameAtom,
 	layerListAtom,
-	downloadMenuAtom,
+	downloadModalAtom,
 } from '../atoms/index';
 import Bookmark from './Bookmark';
 import Search from './Search';
@@ -25,7 +25,7 @@ export default function Toolbar() {
 	const [saveMode, setSaveMode] = useRecoilState(saveModeAtom);
 	const [anchorEl, setAnchorEl] = useRecoilState(bookmarkMenuAtom);
 	const [anchorEl2, setAnchorEl2] = useRecoilState(baseMapMenuAtom);
-	const [anchorEl3, setAnchorEl3] = useRecoilState(downloadMenuAtom);
+	const [downloadModal, setDownloadModal] = useRecoilState(downloadModalAtom);
 	const [mapLoad, setMapLoad] = useRecoilState(mapLoadAtom);
 	const [source, setSource] = useRecoilState(sourceAtom);
 	const [dest, setDest] = useRecoilState(destAtom);
@@ -76,8 +76,8 @@ export default function Toolbar() {
 		setDetailClick(true);
 	};
 
-	const downloadButFun = (event) => {
-		setAnchorEl3(event.currentTarget);
+	const downloadButFun = () => {
+		setDownloadModal(!downloadModal);
 	};
 
 	return (

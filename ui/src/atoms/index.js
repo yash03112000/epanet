@@ -50,8 +50,8 @@ export const baseMapMenuAtom = atom({
 	key: 'baseMapMenu',
 	default: false,
 });
-export const downloadMenuAtom = atom({
-	key: 'downloadMenu',
+export const downloadModalAtom = atom({
+	key: 'downloadModal',
 	default: false,
 });
 export const mapAtom = atom({
