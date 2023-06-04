@@ -28,9 +28,21 @@ export default function RouteEditor() {
 					<span>Source</span>
 					<div className="w-80 h-80 border-2 rounded-lg flex flex-col items-center overflow-auto">
 						{source.map((item, i) => (
-							<span key={i}>
-								S--{item.lat.toFixed(6)},{item.lng.toFixed(6)}
-							</span>
+							<div
+								key={i}
+								className="flex flex-row w-full justify-evenly items-center"
+							>
+								<div>
+									S--{item.lat.toFixed(6)},{item.lng.toFixed(6)}
+								</div>
+								<div
+									onClick={() =>
+										setSource((prev) => prev.filter((p, ind) => ind != i))
+									}
+								>
+									Delete
+								</div>
+							</div>
 						))}
 					</div>
 				</div>
@@ -38,9 +50,21 @@ export default function RouteEditor() {
 					<span>Destinations</span>
 					<div className="w-80 h-80 border-2 rounded-lg flex flex-col items-center overflow-auto">
 						{dest.map((item, i) => (
-							<span key={i}>
-								D{i}--{item.lat.toFixed(6)},{item.lng.toFixed(6)}
-							</span>
+							<div
+								key={i}
+								className="flex flex-row w-full justify-evenly items-center"
+							>
+								<div>
+									D--{item.lat.toFixed(6)},{item.lng.toFixed(6)}
+								</div>
+								<div
+									onClick={() =>
+										setDest((prev) => prev.filter((p, ind) => ind != i))
+									}
+								>
+									Delete
+								</div>
+							</div>
 						))}
 					</div>
 				</div>
