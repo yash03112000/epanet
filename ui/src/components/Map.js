@@ -22,6 +22,8 @@ import {
 	measureAtom,
 	mapTypeAtom,
 	mapStyleAtom,
+	measureDestAtom,
+	measureSourceAtom,
 } from '../atoms/index';
 import AddIcon from '@mui/icons-material/Add';
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
@@ -50,17 +52,26 @@ export default function Map() {
 	const [measure, setMeasure] = useRecoilState(measureAtom);
 	const [mapType, setMapType] = useRecoilState(mapTypeAtom);
 	const [mapStyle, setMapStyle] = useRecoilState(mapStyleAtom);
+	const [measureSource, setMeasureSource] = useRecoilState(measureSourceAtom);
+	const [measureDest, setMeasureDest] = useRecoilState(measureDestAtom);
 
 	const mapRef = useRef();
 	const [infoPos, setInfoPos] = useState(null);
 
 	const mapClickFun = (latlog) => {
-		if (newRoute || measure) {
-			setRun(false);
+		if (newRoute) {
+			// setRun(false);
 			if (source.length == 0) {
 				setSource((old) => [...old, latlog]);
 			} else {
 				setDest((old) => [...old, latlog]);
+			}
+		} else if (measure) {
+			// setRun(false);
+			if (measureSource.length == 0) {
+				setMeasureSource((old) => [...old, latlog]);
+			} else {
+				setMeasureDest((old) => [...old, latlog]);
 			}
 		}
 	};
@@ -202,10 +213,9 @@ export default function Map() {
 				onUnmount={() => setMapLoad(false)}
 			>
 				{run &&
-					!measure &&
 					dest.map((d, i) => <Direction src={source[0]} des={d} key={i} />)}
-				{measure && source.length && dest.length && (
-					<MapMeasure src={source[0]} des={dest} />
+				{measure && measureSource.length && measureDest.length && (
+					<MapMeasure src={measureSource[0]} des={measureDest} />
 				)}
 				{BaseMapFun()}
 				<div className="z-10 bg-slate-200  relative flex flex-col w-10 h-50 items-center justify-center cursor-pointer p-3">

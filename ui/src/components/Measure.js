@@ -1,9 +1,13 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { sourceAtom, destAtom, measureAtom } from '../atoms/index';
+import {
+	measureSourceAtom,
+	measureDestAtom,
+	measureAtom,
+} from '../atoms/index';
 
 export default function Measure() {
-	const [source, setSource] = useRecoilState(sourceAtom);
-	const [dest, setDest] = useRecoilState(destAtom);
+	const [source, setSource] = useRecoilState(measureSourceAtom);
+	const [dest, setDest] = useRecoilState(measureDestAtom);
 
 	const measure = useRecoilValue(measureAtom);
 
@@ -39,7 +43,7 @@ export default function Measure() {
 			<div>
 				<div>Measure</div>
 			</div>
-			<div className="flex flex-row w-full">
+			{/* <div className="flex flex-row w-full">
 				<div className="w-1/2 flex flex-col items-center">
 					<span>Source</span>
 					<div className="w-80 h-80 border-2 rounded-lg flex flex-col items-center overflow-auto">
@@ -60,7 +64,7 @@ export default function Measure() {
 						))}
 					</div>
 				</div>
-			</div>
+			</div> */}
 			{source.length > 0 && dest.length > 0 && (
 				<div>
 					<div>Total Distance</div>

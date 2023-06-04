@@ -14,6 +14,8 @@ import {
 	routeNameAtom,
 	layerListAtom,
 	downloadModalAtom,
+	measureDestAtom,
+	measureSourceAtom,
 } from '../atoms/index';
 import Bookmark from './Bookmark';
 import Search from './Search';
@@ -34,6 +36,8 @@ export default function Toolbar() {
 	const [detailClick, setDetailClick] = useRecoilState(detailsClickAtom);
 	const [routeName, setrouteName] = useRecoilState(routeNameAtom);
 	const [layerList, setLayerlist] = useRecoilState(layerListAtom);
+	const [measureSource, setMeasureSource] = useRecoilState(measureSourceAtom);
+	const [measureDest, setMeasureDest] = useRecoilState(measureDestAtom);
 
 	const routeButFun = () => {
 		setnewRoute(false);
@@ -42,6 +46,9 @@ export default function Toolbar() {
 		setSource([]);
 		setDest([]);
 		setLayerlist([]);
+		setMeasureSource([]);
+		setMeasureDest([]);
+		setMeasure(false);
 	};
 	const saveButFun = () => {
 		setSaveMode(0);
@@ -53,8 +60,8 @@ export default function Toolbar() {
 	};
 	const measureButFun = () => {
 		setnewRoute(false);
-		setSource([]);
-		setDest([]);
+		setMeasureSource([]);
+		setMeasureDest([]);
 		setMeasure(!measure);
 	};
 	const bookmarkButFun = (event) => {
@@ -68,6 +75,7 @@ export default function Toolbar() {
 		setDest([]);
 		setnewRoute(true);
 		setDetailClick(false);
+		setMeasure(false);
 	};
 	const detailsFun = () => {
 		setnewRoute(false);

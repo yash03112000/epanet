@@ -9,6 +9,15 @@ export const destAtom = atom({
 	default: [],
 });
 
+export const measureSourceAtom = atom({
+	key: 'measureSource',
+	default: [],
+});
+export const measureDestAtom = atom({
+	key: 'measureDest',
+	default: [],
+});
+
 export const newRouteAtom = atom({
 	key: 'newRoute',
 	default: false,
