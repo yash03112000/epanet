@@ -9,6 +9,7 @@ import {
 	BicyclingLayer,
 	KmlLayer,
 	Marker,
+	useGoogleMap,
 } from '@react-google-maps/api';
 import { useState, useRef, useMemo, useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -278,9 +279,28 @@ const MapMeasure = ({ src, des }) => {
 
 const Direction = ({ src, des }) => {
 	const [res, setRes] = useState(null);
+	const map = useGoogleMap();
 	useEffect(() => {
 		directionsCallback();
 	}, [src, des]);
+
+	const lineSymbol = {
+		path: 'M 0,-1 0,1',
+		strokeOpacity: 1,
+		scale: 4,
+	};
+
+	const options = {
+		strokeOpacity: 0,
+		strokeColor: '#7d7d7d',
+		icons: [
+			{
+				icon: lineSymbol,
+				offset: '0',
+				repeat: '20px',
+			},
+		],
+	};
 
 	const directionsCallback = async () => {
 		var directionsService = new google.maps.DirectionsService();
@@ -301,30 +321,41 @@ const Direction = ({ src, des }) => {
 	return (
 		<>
 			{res !== null && (
-				<DirectionsRenderer
-					// required
-					options={{
-						// eslint-disable-line react-perf/jsx-no-new-object-as-prop
-						directions: res,
-						preserveViewport: true,
-						suppressMarkers: true,
-						hideRouteList: true,
-					}}
-					// optional
-					onLoad={(directionsRenderer) => {
-						console.log(
-							'DirectionsRenderer onLoad directionsRenderer: ',
-							directionsRenderer
-						);
-					}}
-					// optional
-					onUnmount={(directionsRenderer) => {
-						console.log(
-							'DirectionsRenderer onUnmount directionsRenderer: ',
-							directionsRenderer
-						);
-					}}
-				/>
+				<>
+					<DirectionsRenderer
+						// required
+						options={{
+							// eslint-disable-line react-perf/jsx-no-new-object-as-prop
+							directions: res,
+							preserveViewport: true,
+							suppressMarkers: true,
+							hideRouteList: true,
+						}}
+						// optional
+						onLoad={(directionsRenderer) => {
+							console.log(
+								'DirectionsRenderer onLoad directionsRenderer: ',
+								directionsRenderer
+							);
+						}}
+						// optional
+						onUnmount={(directionsRenderer) => {
+							console.log(
+								'DirectionsRenderer onUnmount directionsRenderer: ',
+								directionsRenderer
+							);
+						}}
+					/>
+					<Polyline
+						path={[
+							res.routes[0].legs[0].steps[
+								res.routes[0].legs[0].steps.length - 1
+							].end_location,
+							des,
+						]}
+						options={options}
+					/>
+				</>
 			)}
 		</>
 	);
