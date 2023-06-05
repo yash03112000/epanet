@@ -16,7 +16,8 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/ j
     steps:
     - uses: actions/checkout@v2
-#     - run: npm i
+    - run: cd server
+    - run: npm i
 #     - run: npm run build --if-present
 #     - run: cp /home/vipin/api_v1_ookul/.env /home/vipin/api_v1_ookul/api_v1_work/api_v1/api_v1/.env
 #     - run: pm2 restart server.js --name apiv1
