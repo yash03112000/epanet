@@ -43,28 +43,6 @@ export default function Measure() {
 			<div>
 				<div>Measure</div>
 			</div>
-			{/* <div className="flex flex-row w-full">
-				<div className="w-1/2 flex flex-col items-center">
-					<span>Source</span>
-					<div className="w-80 h-80 border-2 rounded-lg flex flex-col items-center overflow-auto">
-						{source.map((item, i) => (
-							<span key={i}>
-								{item.lat.toFixed(6)},{item.lng.toFixed(6)}
-							</span>
-						))}
-					</div>
-				</div>
-				<div className="w-1/2 flex flex-col items-center">
-					<span>Destinations</span>
-					<div className="w-80 h-80 border-2 rounded-lg flex flex-col items-center overflow-auto">
-						{dest.map((item, i) => (
-							<span key={i}>
-								{item.lat.toFixed(6)},{item.lng.toFixed(6)}
-							</span>
-						))}
-					</div>
-				</div>
-			</div> */}
 			{source.length > 0 && dest.length > 0 && (
 				<div>
 					<div>Total Distance</div>

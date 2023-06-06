@@ -71,6 +71,7 @@ export default function Download() {
 								travelMode: 'DRIVING',
 							};
 							try {
+								console.log(request);
 								const response = await directionsService.route(request);
 								console.log(response);
 								if (response.status == 'OK') {
