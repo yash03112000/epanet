@@ -10,7 +10,7 @@ const kml = require('gtran-kml');
 const { Project, Workspace, Pipe } = require('epanet-js');
 var fs = require('fs');
 var shpwrite = require('shp-write');
-
+const Drawing = require('dxf-writer');
 const connectDB = async () => {
 	try {
 		const conn = await mongoose.connect('mongodb://localhost:27017/epanet', {
@@ -28,7 +28,6 @@ const connectDB = async () => {
 		process.exit(1);
 	}
 };
-
 connectDB();
 server.use(cors());
 
@@ -124,19 +123,33 @@ server.post('/toshp', async (req, res) => {
 	console.log('here');
 	const file = await shpwrite.zip(geojson);
 	console.log(file);
-	// fs.writeFile('test.zip', file, 'binary', function (err) {
-	// 	if (err) {
-	// 		console.log(err);
-	// 	} else {
-	// 		console.log('The file was saved!');
-	// 	}
-	// });
-	// res.json({ data: file });
 	res.writeHead(200, {
 		'Content-Disposition': `attachment; filename="a.zip"`,
 		'Content-Type': 'application/zip',
 	});
 	return res.end(file);
+});
+
+server.post('/todxf', (req, res) => {
+	const dxfObj = new Drawing();
+	const geojson = req.body.json;
+	geojson.features.forEach((feature) => {
+		const geometry = feature.geometry;
+		const properties = feature.properties;
+
+		if (geometry.type === 'Point') {
+			const [x, y] = geometry.coordinates;
+			dxfObj.drawPoint(x, y);
+		} else if (geometry.type === 'LineString') {
+			const points = geometry.coordinates.map((coord) => [coord[0], coord[1]]);
+			dxfObj.drawPolyline(points);
+		}
+	});
+	const dxfOutput = dxfObj.toDxfString();
+	// console.log(dxfOutput);
+	res.json({
+		data: dxfOutput,
+	});
 });
 
 server.get('/myRoutes', async (req, res) => {
