@@ -64,36 +64,6 @@ export default function Map() {
 		if (paths.length == 0) return;
 		var temp = [];
 		var mainArr = [];
-		// for (let layer of paths) {
-		// 	var temp2 = [];
-		// 	var prev = true;
-		// 	var save = {};
-		// 	var index = 0;
-		// 	for (let p of layer) {
-		// 		var a = { lat: p.toJSON().lat, lng: p.toJSON().lng };
-		// 		if (!PolyUtil.isLocationOnPath(a, temp, 3)) {
-		// 			if (!prev) {
-		// 				if (temp2.length != 0) mainArr.push(temp2);
-		// 				temp2 = [];
-		// 				// temp2.push(save);
-		// 				temp2.push(a);
-		// 				prev = true;
-		// 				// save = {};
-		// 				temp.push(a);
-		// 			} else {
-		// 				temp2.push(a);
-		// 				temp.push(a);
-		// 				// save = {};
-		// 				prev = true;
-		// 			}
-		// 		} else {
-		// 			prev = false;
-		// 			// save = a;
-		// 		}
-		// 		index++;
-		// 	}
-		// 	mainArr.push(temp2);
-		// }
 
 		for (let layer of paths) {
 			var temp = [];
