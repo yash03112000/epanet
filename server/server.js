@@ -9,6 +9,7 @@ const Route = require('./models/Route');
 const kml = require('gtran-kml');
 const { Project, Workspace, Pipe } = require('epanet-js');
 var fs = require('fs');
+var shpwrite = require('shp-write');
 
 const connectDB = async () => {
 	try {
@@ -116,6 +117,26 @@ server.post('/toepanet', (req, res) => {
 	console.log(file);
 	model.close();
 	res.json({ data: file });
+});
+
+server.post('/toshp', async (req, res) => {
+	const geojson = req.body.json;
+	console.log('here');
+	const file = await shpwrite.zip(geojson);
+	console.log(file);
+	// fs.writeFile('test.zip', file, 'binary', function (err) {
+	// 	if (err) {
+	// 		console.log(err);
+	// 	} else {
+	// 		console.log('The file was saved!');
+	// 	}
+	// });
+	// res.json({ data: file });
+	res.writeHead(200, {
+		'Content-Disposition': `attachment; filename="a.zip"`,
+		'Content-Type': 'application/zip',
+	});
+	return res.end(file);
 });
 
 server.get('/myRoutes', async (req, res) => {
