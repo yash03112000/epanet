@@ -19,6 +19,7 @@
     "autoprefixer": "10.4.14",
     "axios": "^1.4.0",
     "browserify": "^17.0.0",
+    "client-zip": "^2.4.4",
     "gtran-kml": "^1.4.5",
     "next": "13.4.2",
     "node-geometry-library": "^1.2.6",

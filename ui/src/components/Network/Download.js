@@ -8,6 +8,7 @@ import axios from 'axios';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
+import { downloadZip } from 'client-zip';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -117,6 +118,7 @@ export default function Download() {
 	};
 
 	const apply = async (type) => {
+		console.log(type);
 		if (optimisePath.length == 0) {
 			alert('Kindly optimise path first');
 		} else {
@@ -144,6 +146,23 @@ export default function Download() {
 				});
 				var blob = new Blob([res.data.data], { type: 'text/plain' });
 				saveFile(blob, 'g2.inp');
+			} else if (type === 'shp') {
+				const axiosOptions = {
+					responseType: 'arraybuffer',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				};
+				const res = await axios.post(
+					'http://localhost:5000/toshp',
+					{
+						json: geoJson,
+					},
+					axiosOptions
+				);
+				console.log(res);
+				var blob = new Blob([res.data], { type: 'application/octet-stream' });
+				saveFile(blob, 'g2.zip');
 			}
 		}
 
@@ -162,6 +181,9 @@ export default function Download() {
 					</Button>
 					<Button variant="outlined" onClick={() => apply('epanet')}>
 						Epanet
+					</Button>
+					<Button variant="outlined" onClick={() => apply('shp')}>
+						SHP
 					</Button>
 				</div>
 			</Box>
