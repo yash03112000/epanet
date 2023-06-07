@@ -163,6 +163,13 @@ export default function Download() {
 				console.log(res);
 				var blob = new Blob([res.data], { type: 'application/octet-stream' });
 				saveFile(blob, 'g2.zip');
+			} else if (type === 'dxf') {
+				const res = await axios.post('http://localhost:5000/todxf', {
+					json: geoJson,
+				});
+				// console.log(res.data.data);
+				var blob = new Blob([res.data.data], { type: 'text/plain' });
+				saveFile(blob, 'g2.dxf');
 			}
 		}
 
@@ -184,6 +191,9 @@ export default function Download() {
 					</Button>
 					<Button variant="outlined" onClick={() => apply('shp')}>
 						SHP
+					</Button>
+					<Button variant="outlined" onClick={() => apply('dxf')}>
+						DXF
 					</Button>
 				</div>
 			</Box>
