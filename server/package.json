@@ -9,7 +9,9 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"@turf/turf": "^6.5.0",
 		"cors": "^2.8.5",
+		"epanet-js": "^0.7.0",
 		"express": "^4.18.2",
 		"gtran-kml": "^1.4.5",
 		"mongoose": "^7.2.1",

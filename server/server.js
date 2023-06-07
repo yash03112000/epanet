@@ -7,6 +7,8 @@ const isDev = process.env.NODE_ENV !== 'production';
 var cors = require('cors');
 const Route = require('./models/Route');
 const kml = require('gtran-kml');
+const { Project, Workspace, Pipe } = require('epanet-js');
+var fs = require('fs');
 
 const connectDB = async () => {
 	try {
@@ -74,6 +76,60 @@ server.post('/tokml', async (req, res) => {
 	// console.log(req.body.json);
 	const file = await kml.fromGeoJson(req.body.json);
 	res.json({ data: file.data });
+});
+
+server.post('/toepanet', (req, res) => {
+	const geojson = req.body.json;
+	const ws = new Workspace();
+	const model = new Project(ws);
+	// const net1 = fs.readFileSync('a.inp');
+	// ws.writeFile('a.inp', net1);
+
+	model.init('', '', 0, 0);
+
+	geojson.features.forEach((feature) => {
+		const { type, coordinates } = feature.geometry;
+		const prop = feature.properties;
+		if (type === 'Point') {
+			const id = prop.id;
+			console.log(id);
+			const index = model.addNode(id, 0);
+			model.setCoordinates(index, coordinates[1], coordinates[0]);
+		} else if (type === 'LineString') {
+			const id = prop.id;
+			console.log(id);
+			const index = model.addLink(id, 1, prop.from, prop.to);
+			x = [];
+			y = [];
+			coordinates.forEach((cord) => {
+				x.push(cord[1]);
+				y.push(cord[0]);
+			});
+			model.setVertices(index, x, y);
+		}
+	});
+	console.log(model.getCount(0));
+
+	model.saveInpFile(`a.inp`);
+	const file = ws.readFile('a.inp');
+	fs.writeFileSync('a.inp', file);
+	console.log(file);
+	model.close();
+	res.json({ data: file });
+});
+
+server.get('/myRoutes', async (req, res) => {
+	const routes = await Route.find();
+	res.json({
+		routes: routes,
+	});
+});
+
+server.get('/getRoute/:id', async (req, res) => {
+	const route = await Route.findById(req.params.id);
+	res.json({
+		route: route,
+	});
 });
 
 server.listen(port, (err) => {
