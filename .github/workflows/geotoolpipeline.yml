@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: self-hosted
+    defaults:
+      run:
+        working-directory: ./server
         
 
     strategy:
@@ -16,12 +19,12 @@ jobs:
         node-version: [16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/ j
     steps:
-    - uses: actions/checkout@v2
-      # working-directory: epanet/server
-      with:
-          working-directory: epanet/server
-    - run: cd server
-    - run: npm i
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Install Backend dependencies
+      working-directory: server  # Adjust this folder name if necessary
+      run: npm install
+      
 #     - run: npm run build --if-present
 #     - run: cp /home/vipin/api_v1_ookul/.env /home/vipin/api_v1_ookul/api_v1_work/api_v1/api_v1/.env
 #     - run: pm2 restart server.js --name apiv1
