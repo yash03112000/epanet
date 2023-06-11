@@ -1,0 +1,11 @@
+{
+    "apps": [
+        {
+            "name": "nextjs-epanet-UI",
+            "script": "npm",
+            "args" : "start",
+            "instances": "max",
+            "exec_mode": "cluster"
+        }
+    ]
+  }
