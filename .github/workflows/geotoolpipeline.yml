@@ -18,6 +18,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       # working-directory: epanet/server
+      with:
+          working-directory: epanet/server
     - run: cd server
     - run: npm i
 #     - run: npm run build --if-present
