@@ -21,10 +21,20 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+
     - name: Install Backend dependencies
       working-directory: server  # Adjust this folder name if necessary
       run: npm install
-      
+
+    - name: Start or restart project
+      working-directory: server  # Adjust this folder name if necessary
+      run: |
+          if [[ "${{ steps.check-pm2.outputs.is_running }}" == "" ]]; then
+            pm2 start server.js --name geotoolbackend
+          else
+            pm2 restart geotoolbackend
+          fi
+
 #     - run: npm run build --if-present
 #     - run: cp /home/vipin/api_v1_ookul/.env /home/vipin/api_v1_ookul/api_v1_work/api_v1/api_v1/.env
 #     - run: pm2 restart server.js --name apiv1
