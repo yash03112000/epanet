@@ -34,7 +34,7 @@ import Elevation from './Elevation';
 
 const containerStyle = {
 	width: '100vw',
-	height: '50vh',
+	height: '100vh',
 };
 
 const center = {
