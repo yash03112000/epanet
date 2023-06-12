@@ -34,9 +34,9 @@ jobs:
       working-directory: ui
       run: npm install
 
-    # - name: build frontend
-    #   working-directory: ui
-    #   run: npm run build --if-present
+    - name: build frontend
+      working-directory: ui
+      run: npm run build #--if-present
 
     - name: build frontend & running pm2
       working-directory: ui
