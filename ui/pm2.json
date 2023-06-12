@@ -3,7 +3,7 @@
         {
             "name": "nextjs-epanet-UI",
             "script": "npm",
-            "args" : "start",
+            "args" : "build",
             "instances": "max",
             "exec_mode": "cluster"
         }
