@@ -3,6 +3,7 @@ import {
 	downloadModalAtom,
 	optimisePathAtom,
 	routeAtom,
+	junctionsAtom,
 } from '@/atoms/network';
 import axios from 'axios';
 import Box from '@mui/material/Box';
@@ -28,6 +29,7 @@ export default function Download() {
 	const [downloadModal, setDownloadModal] = useRecoilState(downloadModalAtom);
 	const [optimisePath, setOptimisePath] = useRecoilState(optimisePathAtom);
 	const route = useRecoilValue(routeAtom);
+	const [junctions, setJunctions] = useRecoilState(junctionsAtom);
 
 	const saveFile = async (blob, name) => {
 		const a = document.createElement('a');
@@ -48,8 +50,21 @@ export default function Download() {
 		var index = 0;
 		var jnIndex = 0;
 		var points = new Map();
+		for (let jn of junctions) {
+			var d = {};
+			d.type = 'Feature';
+			var e = {};
+			e.type = 'Point';
+			e.coordinates = [jn.cords.lng, jn.cords.lat];
+			d.geometry = e;
+			d.properties = {};
+			d.properties.id = jn.id;
+			a.features.push(d);
+			jnIndex += 1;
+			points.set(JSON.stringify(e.coordinates), jn.id);
+		}
 		for (let path of optimisePath) {
-			console.log(path);
+			// console.log(path);
 			var b = {};
 			b.type = 'Feature';
 			var c = {};
@@ -59,61 +74,15 @@ export default function Download() {
 				c.coordinates.push([p.lng, p.lat]);
 			}
 			b.geometry = c;
-			var start = c.coordinates[0];
-			var end = c.coordinates[c.coordinates.length - 1];
-			if (!points.has(start)) {
-				points.set(start, jnIndex);
-				var d = {};
-				d.type = 'Feature';
-				var e = {};
-				e.type = 'Point';
-				e.coordinates = [];
-				e.coordinates = start;
-				d.geometry = e;
-				d.properties = {};
-				d.properties.id = `Junction-${jnIndex}`;
-				a.features.push(d);
-				jnIndex += 1;
-			}
-			if (!points.has(end)) {
-				points.set(end, jnIndex);
-				var d = {};
-				d.type = 'Feature';
-				var e = {};
-				e.type = 'Point';
-				e.coordinates = [];
-				e.coordinates = end;
-				d.geometry = e;
-				d.properties = {};
-				d.properties.id = `Junction-${jnIndex}`;
-				a.features.push(d);
-				jnIndex += 1;
-			}
+			var start = JSON.stringify(c.coordinates[0]);
+			var end = JSON.stringify(c.coordinates[c.coordinates.length - 1]);
 			b.properties = {};
 			b.properties.id = `Pipe-${index}`;
-			b.properties.from = `Junction-${points.get(start)}`;
-			b.properties.to = `Junction-${points.get(end)}`;
+			b.properties.from = points.get(start);
+			b.properties.to = points.get(end);
 			a.features.push(b);
 			index += 1;
 		}
-		// index = 0;
-		// for (var layer of route.layers) {
-		// 	for (let item of [...layer.source, ...layer.dest]) {
-		// 		var b = {};
-		// 		b.type = 'Feature';
-		// 		var c = {};
-		// 		c.type = 'Point';
-		// 		c.coordinates = [];
-		// 		c.coordinates.push(parseFloat(item.lng.$numberDecimal));
-		// 		c.coordinates.push(parseFloat(item.lat.$numberDecimal));
-		// 		b.geometry = c;
-		// 		b.properties = {};
-		// 		b.properties.id = `Junction-${index}`;
-		// 		a.features.push(b);
-		// 		index += 1;
-		// 	}
-		// }
-
 		return a;
 	};
 

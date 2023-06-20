@@ -29,6 +29,7 @@
     "recoil": "^0.7.7",
     "tailwindcss": "3.3.2",
     "tokml": "^0.4.0",
+    "turf-linestring": "^1.0.2",
     "use-places-autocomplete": "^4.0.0"
   }
 }

@@ -19,3 +19,8 @@ export const optimisePathAtom = atom({
 	key: 'optimisePath',
 	default: [],
 });
+
+export const junctionsAtom = atom({
+	key: 'junctions',
+	default: [],
+});
