@@ -13,7 +13,7 @@ var shpwrite = require('shp-write');
 const Drawing = require('dxf-writer');
 const connectDB = async () => {
 	try {
-		const conn = await mongoose.connect('mongodb://localhost:27017/epanet', {
+		const conn = await mongoose.connect('mongodb+srv://epanetwrk:13zNF7ZukpNsCgsR@cluster0.878cwfr.mongodb.net/?retryWrites=true&w=majority', {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
 			// useFindAndModify: false,

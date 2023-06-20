@@ -18,7 +18,7 @@ import { lineString, lineOverlap, distance, kinks, simplify } from '@turf/turf';
 import axios from 'axios';
 const containerStyle = {
 	width: '100vw',
-	height: '50vh',
+	height: '100vh',
 };
 
 const center = {
