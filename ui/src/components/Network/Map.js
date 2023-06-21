@@ -18,7 +18,7 @@ import { lineString, lineOverlap, distance, kinks, simplify } from '@turf/turf';
 import axios from 'axios';
 const containerStyle = {
 	width: '100vw',
-	height: '100vh',
+	height: '50vh',
 };
 
 const center = {
@@ -29,7 +29,6 @@ const center = {
 const colors = [
 	'#e6194b',
 	'#3cb44b',
-	'#ffe119',
 	'#4363d8',
 	'#f58231',
 	'#911eb4',
@@ -46,7 +45,6 @@ const colors = [
 	'#ffd8b1',
 	'#000075',
 	'#808080',
-	'#000000',
 ];
 
 export default function Mapcom() {
@@ -243,7 +241,7 @@ export default function Mapcom() {
 		var set = new Set();
 		for (var i = 0; i < paths.length; i++) {
 			for (var j = 0; j < paths.length; j++) {
-				if (i == j) continue;
+				// if (i == j) continue;
 				var cors1 = [];
 				var cors2 = [];
 				for (var p of paths[i].path) {
@@ -307,20 +305,20 @@ export default function Mapcom() {
 			}
 		}
 		// console.log(paths);
-		for (let path of paths) {
-			var start = path.path[0];
-			start = start.toJSON();
-			var source = path.source;
-			var dest = path.dest;
-			var end = path.path.at(-1);
-			end = end.toJSON();
-			// var dis = distance([start.lng, source.lng], [start.lat, source.lat]);
-			// if (dis > 0.003)
-			set.add(JSON.stringify(start));
-			// dis = distance([end.lng, dest.lng], [end.lat, dest.lat]);
-			// if (dis > 0.003)
-			set.add(JSON.stringify(end));
-		}
+		// for (let path of paths) {
+		// 	var start = path.path[0];
+		// 	start = start.toJSON();
+		// 	var source = path.source;
+		// 	var dest = path.dest;
+		// 	var end = path.path.at(-1);
+		// 	end = end.toJSON();
+		// 	// var dis = distance([start.lng, source.lng], [start.lat, source.lat]);
+		// 	// if (dis > 0.003)
+		// 	set.add(JSON.stringify(start));
+		// 	// dis = distance([end.lng, dest.lng], [end.lat, dest.lat]);
+		// 	// if (dis > 0.003)
+		// 	set.add(JSON.stringify(end));
+		// }
 		console.log(set);
 
 		var jns = [];
@@ -429,10 +427,37 @@ export default function Mapcom() {
 			var dest = path.dest;
 			var end = path.path.at(-1);
 			end = end.toJSON();
-			var temp = [source, start];
-			mainArr.push(temp);
-			temp = [end, dest];
-			mainArr.push(temp);
+			var sourceId = '';
+			var startId = '';
+			var destid = '';
+			var endId = '';
+			for (let p of jns) {
+				if (p.cords.lng === start.lng && p.cords.lat === start.lat) {
+					startId = p;
+				} else if (p.cords.lng === source.lng && p.cords.lat === source.lat) {
+					sourceId = p;
+				} else if (p.cords.lng === dest.lng && p.cords.lat === dest.lat) {
+					destId = p;
+				} else if (p.cords.lng === end.lng && p.cords.lat === end.lat) {
+					endId = p;
+				}
+			}
+			var id1 = startId.id + '-' + sourceId.id;
+			var id2 = sourceId.id + '-' + startId.id;
+			if (!(set2.has(id1) || set2.has(id2))) {
+				var temp = [source, start];
+				mainArr.push(temp);
+				set2.add(id1);
+				set2.add(id2);
+			}
+			id1 = destId.id + '-' + endId.id;
+			id2 = endId.id + '-' + destId.id;
+			if (!(set2.has(id1) || set2.has(id2))) {
+				var temp = [end, dest];
+				mainArr.push(temp);
+				set2.add(id1);
+				set2.add(id2);
+			}
 		}
 		console.log(set2);
 		console.log(mainArr);
