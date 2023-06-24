@@ -75,7 +75,7 @@ export default function Download() {
 			}
 			b.geometry = c;
 			var start = JSON.stringify(c.coordinates[0]);
-			var end = JSON.stringify(c.coordinates[c.coordinates.length - 1]);
+			var end = JSON.stringify(c.coordinates.at(-1));
 			b.properties = {};
 			b.properties.id = `Pipe-${index}`;
 			b.properties.from = points.get(start);
@@ -84,6 +84,63 @@ export default function Download() {
 			index += 1;
 		}
 		return a;
+	};
+
+	const getDistance = async () => {
+		var dis = [];
+		var sources = [];
+		var destinations = [];
+
+		await (async function loop() {
+			console.log(optimisePath.length);
+			for (let i = 0; i < optimisePath.length; i++) {
+				const path = optimisePath[i];
+				var start = path[0];
+				var end = path.at(-1);
+				sources.push(start);
+				destinations.push(end);
+				if (sources.length == 10 || i == optimisePath.length - 1) {
+					console.log(sources.length, i);
+					// console.log(sources);
+					// console.log(destinations);
+					var service = new google.maps.DistanceMatrixService();
+					await service.getDistanceMatrix(
+						{
+							origins: sources,
+							destinations: destinations,
+							travelMode: 'DRIVING',
+						},
+						callback
+					);
+
+					function callback(res, status) {
+						console.log(res);
+						console.log(status);
+						if (status == 'OK') {
+							for (let j = 0; j < sources.length; j++)
+								if (
+									typeof res.rows[j].elements[j].distance.value !== 'undefined'
+								)
+									dis.push(res.rows[j].elements[j].distance.value);
+								else dis.push(0);
+						}
+					}
+					sources = [];
+					destinations = [];
+				}
+			}
+		})();
+		return dis;
+	};
+
+	const prepareEpanet = (json, dis) => {
+		let index = 0;
+		for (let i = 0; i < json.features.length; i++) {
+			if (json.features[i].geometry.type === 'LineString') {
+				json.features[i].properties.distance = dis[index];
+				index++;
+			}
+		}
 	};
 
 	const apply = async (type) => {
@@ -110,6 +167,9 @@ export default function Download() {
 				var blob = new Blob([res.data.data], { type: 'text/plain' });
 				saveFile(blob, 'g2.kml');
 			} else if (type === 'epanet') {
+				const distances = await getDistance();
+				console.log(distances);
+				prepareEpanet(geoJson, distances);
 				const res = await axios.post('http://localhost:5000/toepanet', {
 					json: geoJson,
 				});

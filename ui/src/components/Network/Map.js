@@ -171,49 +171,12 @@ export default function Mapcom() {
 								const response = await directionsService.route(request);
 								// console.log(response);
 								if (response.status == 'OK') {
-									const pathI = response.routes[0].overview_path;
-									var pathValues2 = [];
-									for (var i = 0; i < pathI.length; i++) {
-										pathValues2.push(pathI[i].toUrlValue());
-									}
-									// console.log(pathValues);
-									const chunkSize = 100;
-									var pathValues = [];
-									// for (let i = 0; i < pathValues2.length; i += chunkSize) {
-									// 	// i -= 10;
-									// 	const chunk = pathValues2.slice(i, i + chunkSize);
-									// 	pathValues.push(chunk);
-									// }
-									// console.log(response);
 									var final = [];
 									for (let step of response.routes[0].legs[0].steps) {
 										final = final.concat(step.path);
+										var d = step.distance;
+										if (typeof step.distance === 'undefined') d = 0;
 									}
-									// console.log(final);
-									// await (async function loop() {
-									// 	for (let i = 0; i < pathValues.length; i++) {
-									// 		var pathValue = pathValues[i];
-									// 		// console.log(i);
-									// 		const res = await axios.get(
-									// 			'https://roads.googleapis.com/v1/snapToRoads?interpolate=true&path=' +
-									// 				pathValue.join('|') +
-									// 				'&key=AIzaSyA_OjhqUEZngOmypOPNnzBZyAvxUtAwhmE'
-									// 		);
-									// 		// console.log(i);
-									// 		var path2 = [];
-									// 		// console.log(res.data.snappedPoints.at(-1));
-									// 		for (let p of res.data.snappedPoints) {
-									// 			// if (p.originalIndex < 10) continue;
-									// 			path2.push({
-									// 				lng: p.location.longitude,
-									// 				lat: p.location.latitude,
-									// 			});
-									// 		}
-									// 		final = final.concat(path2);
-									// 	}
-									// })();
-									// console.log('final');
-									// console.log(final);
 
 									layerCords.push({
 										path: final,
@@ -291,35 +254,12 @@ export default function Mapcom() {
 					};
 					var issue1 = false;
 					var issue2 = false;
-					// for (var point of markers) {
-					// 	var dis = distance([point.lng, point.lat], [jn1.lng, jn1.lat]);
-					// 	if (dis < 0.003) issue1 = true;
-					// }
-					// for (var point of markers) {
-					// 	var dis = distance([point.lng, point.lat], [jn2.lng, jn2.lat]);
-					// 	if (dis < 0.003) issue2 = true;
-					// }
+
 					if (!issue1) set.add(JSON.stringify(jn1));
 					if (!issue2) set.add(JSON.stringify(jn2));
 				}
 			}
 		}
-		// console.log(paths);
-		// for (let path of paths) {
-		// 	var start = path.path[0];
-		// 	start = start.toJSON();
-		// 	var source = path.source;
-		// 	var dest = path.dest;
-		// 	var end = path.path.at(-1);
-		// 	end = end.toJSON();
-		// 	// var dis = distance([start.lng, source.lng], [start.lat, source.lat]);
-		// 	// if (dis > 0.003)
-		// 	set.add(JSON.stringify(start));
-		// 	// dis = distance([end.lng, dest.lng], [end.lat, dest.lat]);
-		// 	// if (dis > 0.003)
-		// 	set.add(JSON.stringify(end));
-		// }
-		console.log(set);
 
 		var jns = [];
 		var jnIndex = 0;
@@ -364,7 +304,7 @@ export default function Mapcom() {
 
 		var mainArr = [];
 		var set2 = new Set();
-		console.log('junctions', jns);
+		// console.log('junctions', jns);
 		// console.log(paths);
 
 		for (var path of paths) {
@@ -382,7 +322,7 @@ export default function Mapcom() {
 					sourceId = p;
 				}
 			}
-			console.log(start);
+			// console.log(start);
 			for (let p of jns) {
 				if (p.cords.lat === end.lat && p.cords.lng === p.cords.lng) {
 					destId = p;
@@ -408,7 +348,7 @@ export default function Mapcom() {
 					var id1 = sourceId.id + '-' + jnId.id;
 					var id2 = jnId.id + '-' + sourceId.id;
 					if (!(set2.has(id1) || set2.has(id2))) {
-						console.log('srcid', sourceId);
+						// console.log('srcid', sourceId);
 						// console.log('jnid', jnId);
 						mainArr.push(temp);
 						set2.add(id1);
@@ -459,8 +399,8 @@ export default function Mapcom() {
 				set2.add(id2);
 			}
 		}
-		console.log(set2);
-		console.log(mainArr);
+		// console.log(set2);
+		// console.log(mainArr);
 		setOptimisePath(mainArr);
 	};
 

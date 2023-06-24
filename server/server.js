@@ -11,6 +11,8 @@ const { Project, Workspace, Pipe } = require('epanet-js');
 var fs = require('fs');
 var shpwrite = require('shp-write');
 const Drawing = require('dxf-writer');
+const utm = require('utm');
+
 const connectDB = async () => {
 	try {
 		const conn = await mongoose.connect('mongodb://localhost:27017/epanet', {
@@ -48,10 +50,6 @@ if (isDev) {
 server.use(express.urlencoded({ extended: true, limit: '10mb' }));
 server.use(express.json({ limit: '10mb' }));
 
-server.get('/', (req, res) => {
-	res.json({});
-});
-
 server.post('/saveRoute', async (req, res) => {
 	console.log(req.body);
 	const { body, mode, layers } = req.body;
@@ -72,6 +70,20 @@ server.post('/saveRoute', async (req, res) => {
 	}
 });
 
+const latLngToUtm = (latitude, longitude) => {
+	// Convert latitude and longitude to UTM coordinates
+	const utmCoords = utm.fromLatLon(latitude, longitude);
+	console.log(utmCoords);
+
+	// Return UTM easting and northing values
+	return {
+		easting: utmCoords.easting,
+		northing: utmCoords.northing,
+		zoneNumber: utmCoords.zoneNum,
+		zoneLetter: utmCoords.zoneLetter,
+	};
+};
+
 server.post('/tokml', async (req, res) => {
 	// console.log(req.body.json);
 	const file = await kml.fromGeoJson(req.body.json);
@@ -85,7 +97,7 @@ server.post('/toepanet', (req, res) => {
 	// const net1 = fs.readFileSync('a.inp');
 	// ws.writeFile('a.inp', net1);
 
-	model.init('', '', 0, 0);
+	model.init('', '', 6, 0);
 
 	geojson.features.forEach((feature) => {
 		const { type, coordinates } = feature.geometry;
@@ -93,8 +105,21 @@ server.post('/toepanet', (req, res) => {
 		if (type === 'Point') {
 			const id = prop.id;
 			console.log(id);
-			const index = model.addNode(id, 0);
-			model.setCoordinates(index, coordinates[1], coordinates[0]);
+			if (id.split('-')[0] === 'Source') {
+				const index = model.addNode(id, 0);
+				model.setCoordinates(
+					index,
+					latLngToUtm(coordinates[1], coordinates[0]).easting,
+					latLngToUtm(coordinates[1], coordinates[0]).northing
+				);
+			} else {
+				const index = model.addNode(id, 1);
+				model.setCoordinates(
+					index,
+					latLngToUtm(coordinates[1], coordinates[0]).easting,
+					latLngToUtm(coordinates[1], coordinates[0]).northing
+				);
+			}
 		} else if (type === 'LineString') {
 			const id = prop.id;
 			console.log(id);
@@ -102,10 +127,13 @@ server.post('/toepanet', (req, res) => {
 			x = [];
 			y = [];
 			coordinates.forEach((cord) => {
-				x.push(cord[1]);
-				y.push(cord[0]);
+				x.push(latLngToUtm(cord[1], cord[0]).easting);
+				y.push(latLngToUtm(cord[1], cord[0]).northing);
 			});
 			model.setVertices(index, x, y);
+			// console.log(prop.distance);
+			if (prop.distance == 0) prop.distance = 1;
+			model.setPipeData(index, prop.distance, 10, 130, 0);
 		}
 	});
 	console.log(model.getCount(0));
@@ -138,15 +166,17 @@ server.post('/todxf', (req, res) => {
 		const properties = feature.properties;
 
 		if (geometry.type === 'Point') {
-			const [x, y] = geometry.coordinates;
-			dxfObj.drawPoint(x, y);
+			const [y, x] = geometry.coordinates;
+			dxfObj.drawPoint(latLngToUtm(x, y).easting, latLngToUtm(x, y).northing);
 		} else if (geometry.type === 'LineString') {
-			const points = geometry.coordinates.map((coord) => [coord[0], coord[1]]);
+			const points = geometry.coordinates.map((coord) => [
+				latLngToUtm(coord[1], coord[0]).easting,
+				latLngToUtm(coord[1], coord[0]).northing,
+			]);
 			dxfObj.drawPolyline(points);
 		}
 	});
 	const dxfOutput = dxfObj.toDxfString();
-	// console.log(dxfOutput);
 	res.json({
 		data: dxfOutput,
 	});
