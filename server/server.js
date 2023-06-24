@@ -106,14 +106,14 @@ server.post('/toepanet', (req, res) => {
 			const id = prop.id;
 			console.log(id);
 			if (id.split('-')[0] === 'Source') {
-				const index = model.addNode(id, 0);
+				const index = model.addNode(id, 1);
 				model.setCoordinates(
 					index,
 					latLngToUtm(coordinates[1], coordinates[0]).easting,
 					latLngToUtm(coordinates[1], coordinates[0]).northing
 				);
 			} else {
-				const index = model.addNode(id, 1);
+				const index = model.addNode(id, 0);
 				model.setCoordinates(
 					index,
 					latLngToUtm(coordinates[1], coordinates[0]).easting,
